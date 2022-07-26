@@ -29,6 +29,8 @@ from vts.utils.python.library import elf_parser
 from vts.utils.python.library.vtable import vtable_dumper
 from vts.utils.python.vndk import vndk_utils
 
+# The riscv64 tag , 64 bit only
+TAG_RISCV = "riscv64"
 
 class VtsVndkAbiTest(unittest.TestCase):
     """A test module to verify ABI compliance of vendor libraries.
@@ -347,7 +349,13 @@ class VtsVndkAbiTest(unittest.TestCase):
 
     def testAbiCompatibility32(self):
         """Checks ABI compliance of 32-bit VNDK libraries."""
-        self._TestAbiCompatibility(32)
+        """self._TestAbiCompatibility(32)"""
+        primary_abi = self._dut.GetCpuAbiList()[0]
+        if primary_abi==TAG_RISCV:
+            logging.info("Skip the test as the riscv64 device doesn't support 32-bit "
+                         "ABI.")
+        else:
+            self._TestAbiCompatibility(32)
 
     def testAbiCompatibility64(self):
         """Checks ABI compliance of 64-bit VNDK libraries."""
